@@ -6,8 +6,8 @@ const isValid = function (value) {
   return true;
 };
 
-const isValidRequestBody = function (requestBody) {
-  return Object.keys(requestBody).length > 0;
+const isValidRequestBody = function (data) {
+  return Object.keys(data).length > 0;
 };
 
 const isString = function (value) {
