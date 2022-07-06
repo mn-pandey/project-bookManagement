@@ -1,4 +1,8 @@
 const validator = require("email-validator");
+const { default: mongoose } = require("mongoose");
+
+
+//--------------------------------------------------------------------//
 
 const isValid = function (value) {
   if (typeof value === "undefined" || value === null) return false;
@@ -6,7 +10,7 @@ const isValid = function (value) {
   return true;
 };
 
-const isValidRequestBody = function (data) {
+const isValidBody = function (data) {
   return Object.keys(data).length > 0;
 };
 
@@ -37,13 +41,18 @@ const isValidObjectId = function (objectId) {
 }
 
 
-//----------------------------------------------//
+
+//--------------------------------------------------------------------//
+
 
 module.exports = {
   isValid,
-  isValidRequestBody,
+  isValidBody,
   isValidSyntaxOfEmail,
   isValidMobileNum,
   alphabetTestOfString,
   isValidObjectId
 };
+
+
+//--------------------------------------------------------------------//

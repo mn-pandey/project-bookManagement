@@ -1,14 +1,16 @@
 const userModel = require("../models/userModel")
-const booksModel = require("../models/booksModel")
 const validate = require("../validation/validation")
+const jwt = require("jsonwebtoken")
 
+
+//--------------------------------------------------------------------//
 
 const registerUser = async function (req, res) {
     try {
         let data = req.body
         let { title, name, phone, email, password, address } = data
 
-        if (!validate.isValidRequestBody(data)) {
+        if (!validate.isValidBody(data)) {
             return res.status(400).send({ status: false, message: "Please provide data for registration 🛑" });
         }
 
@@ -77,18 +79,18 @@ const registerUser = async function (req, res) {
     }
 }
 
-//---------------------------------------------------------//
+//--------------------------------------------------------------------//
 
 const loginUser = async function (req, res) {
     try {
         let data = req.body
-        if (!validator.isValidBody(data))
+        if (!validate.isValidBody(data))
             return res.status(400).send({ status: false, message: " Provide your login credentials 🛑" })
 
-        if (!validator.isValid(data.email))
+        if (!validate.isValid(data.email))
             return res.status(400).send({ status: false, Message: 'Please provide your Email 🛑' })
 
-        if (!validator.isValid(data.password))
+        if (!validate.isValid(data.password))
             return res.status(400).send({ status: false, message: 'Password is Required 🛑' })
 
         if (!/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(data.email)) {
@@ -98,7 +100,7 @@ const loginUser = async function (req, res) {
         if (!(data.password.trim().length >= 8 || !(data.password.trim().length <= 15))) {
             return res.status(400).send({ status: false, message: "Password should have length if range 8 to 15 🛑" })
         }
-        const user = await userModel.findone({ email: data.email, password: data.password })
+        const user = await userModel.findOne ({ email: data.email, password: data.password })
 
         if (!user) return res.status(400).send({ status: false, message: 'Invalid login credentials 🛑' });
 
@@ -115,6 +117,10 @@ const loginUser = async function (req, res) {
     }
 }
 
+//--------------------------------------------------------------------//
 
 
 module.exports = { registerUser, loginUser }
+
+
+//--------------------------------------------------------------------//
