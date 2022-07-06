@@ -32,6 +32,11 @@ let alphabetTestOfString = function (value) {
   return true;
 };
 
+const isValidObjectId = function (objectId) {
+  return mongoose.Types.ObjectId.isValid(objectId)
+}
+
+
 //----------------------------------------------//
 
 module.exports = {
@@ -40,4 +45,5 @@ module.exports = {
   isValidSyntaxOfEmail,
   isValidMobileNum,
   alphabetTestOfString,
+  isValidObjectId
 };
