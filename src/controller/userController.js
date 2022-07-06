@@ -2,7 +2,7 @@ const userModel = require("../models/userModel")
 const validate = require("../validation/validation")
 
 
-const createUser = async function (req, res){
+const registerUser = async function (req, res){
     try{
         let data = req.body
         let { title, name, phone, email, password, address } = data
@@ -57,7 +57,7 @@ const createUser = async function (req, res){
             return res.status(400).send({ status: false, message: "Please provide password 🛑" });;
         }
         let size = password.length
-        if (size <= 8 || size >= 12 ) {
+        if (size < 8 || size > 12 ) {
             return res.status(400).send({ status: false, message: "Please provide password with minimum or equal to 8 and maximum or equal to 12 characters 🛑" });;
         }
 
@@ -77,4 +77,4 @@ const createUser = async function (req, res){
 }
 
 
-module.exports = { createUser }
+module.exports = { registerUser }

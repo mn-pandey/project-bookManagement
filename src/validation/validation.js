@@ -1,4 +1,4 @@
-const validator = require("validator");
+const validator = require("email-validator");
 
 const isValid = function (value) {
   if (typeof value === "undefined" || value === null) return false;
