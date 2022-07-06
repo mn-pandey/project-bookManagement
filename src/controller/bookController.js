@@ -3,6 +3,7 @@ const userModel = require("../models/userModel")
 const validate = require("../validation/validation")
 const validateDate = require("validate-date");
 
+
 const createBook = async function (req, res) {
     try {
         let data = req.body;
@@ -10,6 +11,16 @@ const createBook = async function (req, res) {
 
         if (!validate.isValidBody(data)) {
             return res.status(400).send({ status: false, message: "Please provide data ⚠️" })
+        }
+
+        if (!validate.isValid(userId)) {
+            return res.status(400).send({ status: false, message: "Please provide userId" });
+        }
+        if(!validate.isValidObjectId(userId)){
+            return res.status(400).send({ status: false, message: "Please Provide a valid userId in body" });;
+        }
+        if (userId != req.userId) {
+            return res.status(400).send({ status: false, message: "Your are not authorize to create this book with this userId" });;
         }
 
         if (!validate.isValid(title)) {

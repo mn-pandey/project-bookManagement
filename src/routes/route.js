@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const userController = require("../controller/userController")
 const bookController = require("../controller/bookController")
+const middleware = require("../middleware/auth")
 
 
 
@@ -9,7 +10,7 @@ const bookController = require("../controller/bookController")
 
 router.post("/register", userController.registerUser)
 router.post("/login", userController.loginUser)
-router.post("/books", bookController.createBook)
+router.post("/books", middleware.tokenChecker, bookController.createBook)
 
 //--------------------------------------------------------------------//
 module.exports = router;
