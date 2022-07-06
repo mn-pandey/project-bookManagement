@@ -5,7 +5,7 @@ const tokenChecker = async function (req, res, next) {
     let token = req.headers["user-login-key"];
 
     if (!token) {
-      return res.status(403).send({ status: false, message: "Missing authentication token in request ⚠️", });
+      return res.status(401).send({ status: false, message: "Missing authentication token in request ⚠️", });
     }
 
     jwt.verify(token, "Project_3_BooksManagement", function (err, decoded) {

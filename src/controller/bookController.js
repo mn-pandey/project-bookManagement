@@ -3,6 +3,7 @@ const userModel = require("../models/userModel")
 const validate = require("../validation/validation")
 const validateDate = require("validate-date");
 
+//--------------------------------------------------------------------//
 
 const createBook = async function (req, res) {
     try {
@@ -14,13 +15,15 @@ const createBook = async function (req, res) {
         }
 
         if (!validate.isValid(userId)) {
-            return res.status(400).send({ status: false, message: "Please provide userId" });
+            return res.status(400).send({ status: false, message: "Please provide userId ⚠️" });
         }
+
         if(!validate.isValidObjectId(userId)){
-            return res.status(400).send({ status: false, message: "Please Provide a valid userId in body" });;
+            return res.status(400).send({ status: false, message: "Please Provide a valid userId in body ⚠️" });;
         }
+
         if (userId != req.userId) {
-            return res.status(400).send({ status: false, message: "Your are not authorize to create this book with this userId" });;
+            return res.status(403).send({ status: false, message: "Your are not authorize to create this book with this userId ⚠️" });;
         }
 
         if (!validate.isValid(title)) {
@@ -34,11 +37,7 @@ const createBook = async function (req, res) {
         if (!validate.isValid(excerpt)) {
             return res.status(400).send({ status: false, message: "excerpt must be present ⚠️" })
         }
-
-        if (!validate.isValid(userId)) {
-            return res.status(400).send({ status: false, message: "userId must be present ⚠️" })
-        }
-
+        
         if (!validate.isValid(ISBN)) {
             return res.status(400).send({ status: false, message: "ISBN must be present ⚠️" })
         }
@@ -50,15 +49,13 @@ const createBook = async function (req, res) {
         if (!validate.isValid(category)) {
             return res.status(400).send({ status: false, message: "category must be present ⚠️" })
         }
+        
         if (!validate.isValid(subcategory)) {
             return res.status(400).send({ status: false, message: "subcategory must be present ⚠️" })
         }
+
         if (!validate.isValid(releasedAt)) {
             return res.status(400).send({ status: false, message: "releasedAt must be present ⚠️" })
-        }
-
-        if (!validate.isValidObjectId(userId)) {
-            return res.status(400).send({ status: false, message: "Invalid userId ⚠️" })
         }
 
         if (!validateDate(releasedAt, responseType = 'boolean')) {
@@ -77,5 +74,7 @@ const createBook = async function (req, res) {
         return res.status(500).send({ status: false, message: err.message });
     }
 }
+
+//--------------------------------------------------------------------//
 
 module.exports = { createBook }

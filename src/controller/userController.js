@@ -17,6 +17,11 @@ const registerUser = async function (req, res) {
         if (!validate.isValid(title)) {
             return res.status(400).send({ status: false, message: "Please provide title field 🛑" });
         }
+        if(title){
+            if(!( ["Mr", "Mrs", "Miss"].includes(title))) {
+              return res.status(400).send({ Status: false, message: "Please provide valid title 🛑" })
+            }
+        }
 
         if (!validate.isValid(name)) {
             return res.status(400).send({ status: false, message: "Please provide name field 🛑" });
@@ -60,8 +65,8 @@ const registerUser = async function (req, res) {
             return res.status(400).send({ status: false, message: "Please provide password 🛑" });;
         }
         let size = password.length
-        if (size < 8 || size > 12) {
-            return res.status(400).send({ status: false, message: "Please provide password with minimum or equal to 8 and maximum or equal to 12 characters 🛑" });;
+        if (size < 8 || size > 15) {
+            return res.status(400).send({ status: false, message: "Please provide password with minimum or equal to 8 and maximum or equal to 15 characters 🛑" });;
         }
 
         if (!validate.isValid(address)) {
@@ -91,15 +96,8 @@ const loginUser = async function (req, res) {
             return res.status(400).send({ status: false, Message: "Please provide your Email 🛑" })
 
         if (!validate.isValid(data.password))
-            return res.status(400).send({ status: false, message: "Password is Required 🛑" })
+            return res.status(400).send({ status: false, message: "Please provide your Password 🛑" })
 
-        if (!/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(data.email)) {
-            return res.status(400).send({ status: false, message: "Email Should Be Valid Email Address 🛑" })
-        }
-
-        if (!(data.password.trim().length >= 8 || !(data.password.trim().length <= 15))) {
-            return res.status(400).send({ status: false, message: "Password should have length if range 8 to 15 🛑" })
-        }
         const user = await userModel.findOne ({ email: data.email, password: data.password })
 
         if (!user) return res.status(400).send({ status: false, message: "Invalid login credentials 🛑" });
