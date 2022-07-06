@@ -30,7 +30,7 @@ const registerUser = async function (req, res) {
             return res.status(400).send({ status: false, message: "Please provide phone number 🛑" });
         }
         if (!validate.isValidMobileNum(phone)) {
-            return res.status(400).send({ status: false, message: 'Please provide a valid phone number 🛑' })
+            return res.status(400).send({ status: false, message: "Please provide a valid phone number 🛑" })
         }
 
         if (phone) {
@@ -71,7 +71,7 @@ const registerUser = async function (req, res) {
         let registration = { title, name, phone, email, password, address }
 
         const userData = await userModel.create(registration);
-        return res.status(201).send({ status: true, message: 'Registration Successful ✅', data: userData });
+        return res.status(201).send({ status: true, message: "Registration Successful ✅", data: userData });
 
     }
     catch (err) {
@@ -88,13 +88,13 @@ const loginUser = async function (req, res) {
             return res.status(400).send({ status: false, message: " Provide your login credentials 🛑" })
 
         if (!validate.isValid(data.email))
-            return res.status(400).send({ status: false, Message: 'Please provide your Email 🛑' })
+            return res.status(400).send({ status: false, Message: "Please provide your Email 🛑" })
 
         if (!validate.isValid(data.password))
-            return res.status(400).send({ status: false, message: 'Password is Required 🛑' })
+            return res.status(400).send({ status: false, message: "Password is Required 🛑" })
 
         if (!/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(data.email)) {
-            return res.status(400).send({ status: false, message: 'Email Should Be Valid Email Address 🛑' })
+            return res.status(400).send({ status: false, message: "Email Should Be Valid Email Address 🛑" })
         }
 
         if (!(data.password.trim().length >= 8 || !(data.password.trim().length <= 15))) {
@@ -102,13 +102,13 @@ const loginUser = async function (req, res) {
         }
         const user = await userModel.findOne ({ email: data.email, password: data.password })
 
-        if (!user) return res.status(400).send({ status: false, message: 'Invalid login credentials 🛑' });
+        if (!user) return res.status(400).send({ status: false, message: "Invalid login credentials 🛑" });
 
         const token = jwt.sign({
             userId: user._id,
             iat: Math.floor(Date.now() / 1000),
             exp: Math.floor(Date.now() / 1000) * 24 * 60 * 60,
-        }, 'Project_3_BooksManagement')
+        }, "Project_3_BooksManagement")
 
         res.status(200).send({ status: true, message: "Login Sucsessful ✅", data: token });
 
