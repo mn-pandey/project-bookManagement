@@ -10,11 +10,6 @@ const isValidRequestBody = function (data) {
   return Object.keys(data).length > 0;
 };
 
-const isString = function (value) {
-  if (typeof value === "string" && value.trim().length === 0) return false;
-  return true;
-};
-
 const isValidMobileNum = function (value) {
   if (!/^[6-9]\d{9}$/.test(value)) {
     return false;
@@ -45,5 +40,4 @@ module.exports = {
   isValidSyntaxOfEmail,
   isValidMobileNum,
   alphabetTestOfString,
-  isString,
 };
