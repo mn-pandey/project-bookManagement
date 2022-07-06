@@ -6,7 +6,7 @@ const createUser = async function (req, res){
     try{
         let data = req.body
         let { title, name, phone, email, password, address } = data
-        
+
         if (!validate.isValidRequestBody(data)) {
             return res.status(400).send({ status: false, message: "Please provide data for registration 🛑" });
         }
@@ -56,7 +56,7 @@ const createUser = async function (req, res){
         if (!validate.isValid(password)) {
             return res.status(400).send({ status: false, message: "Please provide password 🛑" });;
         }
-        let size = Object.keys(password).length
+        let size = password.length
         if (size <= 8 || size >= 12 ) {
             return res.status(400).send({ status: false, message: "Please provide password with minimum or equal to 8 and maximum or equal to 12 characters 🛑" });;
         }
