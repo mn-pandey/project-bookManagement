@@ -103,7 +103,7 @@ const getBooks = async function (req, res) {
             }
             filter["subcategory"] = req.query.subcategory
         }
-        let book = await booksModel.find(filter).select({ _id: 1, title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1 }).sort({ title: -1 })
+        let book = await booksModel.find(filter).select({ title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1, reviews: 1 }).sort({ title: 1 })
 
         if (book.length > 0) {
             return res.status(200).send({ status: true, message: "book  list ✅", data: book })
@@ -129,7 +129,7 @@ const getBookByParams = async function (req, res) {
             return res.status(400).send({ status: false, message: "Inavlid bookId ⚠️" })
         }
 
-        const findBook = await booksModel.findOne({ _id: bookParams, isDeleted: false })
+        const findBook = await booksModel.findOne({ _id: bookParams, isDeleted: false }).select({ __v: 0 })
         if (!findBook) {
             return res.status(404).send({ status: false, message: `Book does not exist or is already been deleted for this ${bookParams} ⚠️` })
         }
@@ -155,13 +155,14 @@ const updateBooks = async function (req, res) {
                 return res.status(400).send({ status: false, msg: "bookId is not valid book id please check it ⚠️" })
             }
         }
+
         let book = await booksModel.findOne({ _id: bookId, isDeleted: false })
         if (!book) {
             return res.status(400).send({ status: false, message: "bookId is not matching with any existing bookId or it is deleted ⚠️" })
         }
 
         if (book.userId != req.userId) {
-            return res.status(401).send({ status: false, message: "Unauthorized access ⚠️" })
+            return res.status(403).send({ status: false, message: "Unauthorized access ⚠️" })
         }
 
         let data = req.body;
@@ -187,7 +188,7 @@ const updateBooks = async function (req, res) {
             book.ISBN = ISBN;
         }
         book.save();
-        res.status(200).send({ status: true, message: "updated succesfully ✅", data: book })
+        return res.status(200).send({ status: true, message: "updated succesfully ✅", data: book })
     }
     catch (err) {
         return res.status(500).send({ status: false, message: err.message })
@@ -197,27 +198,28 @@ const updateBooks = async function (req, res) {
 //--------------------------------------------------------------------//
 
 
-const deleteBookById = async function(req,res){
-    try{
+const deleteBookById = async function (req, res) {
+    try {
         let bookId = req.params.bookId;
-        if(bookId){
-        if (!validate.isValidObjectId(bookId)) {
-            return res.status(400).send({ status: false, msg: "bookId is not valid book id please check it" })
-        }}
-        let book = await booksModel.findOne({_id:bookId,isDeleted:false})
-        if(!book){
-            return res.status(404).send({status:false,message:"bookId is not matching with any existing bookId or it is deleted"})
+        if (bookId) {
+            if (!validate.isValidObjectId(bookId)) {
+                return res.status(400).send({ status: false, msg: "bookId is not valid please check it ⚠️" })
+            }
+        }
+        let book = await booksModel.findOne({ _id: bookId, isDeleted: false })
+        if (!book) {
+            return res.status(404).send({ status: false, message: "bookId is not matching with any existing bookId or it is deleted ⚠️" })
         }
         if (book.userId != req.userId) {
-            return res.status(401).send({ status: false, message: "Unauthorized access." })
+            return res.status(403).send({ status: false, message: "Unauthorized access ⚠️" })
         }
-        let deleted= await booksModel.findOneAndUpdate({_id:bookId,isDeleted:false},{$set:{isDeleted:true,deletedAt:Date.now()}})
-        if(deleted){
-        return res.status(200).send({status:true,message:"book deleted succesfully ✅"})
+        let deleted = await booksModel.findOneAndUpdate({ _id: bookId, isDeleted: false }, { $set: { isDeleted: true, deletedAt: Date.now() } })
+        if (deleted) {
+            return res.status(200).send({ status: true, message: "book deleted succesfully ✅" })
         }
-    }catch(err){
-    res.status(500).send({status:false,message:err.message})
-}
+    } catch (err) {
+        res.status(500).send({ status: false, message: err.message })
+    }
 }
 //--------------------------------------------------------------------//
 
