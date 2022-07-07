@@ -147,79 +147,80 @@ const getBookByParams = async function (req, res) {
 
 //--------------------------------------------------------------------//
 
-const updateBooks = async function(req,res){
-    try{
-    let bookId = req.params.bookId;
-    if(bookId){
-    if (!validate.isValidObjectId(bookId)) {
-        return res.status(400).send({ status: false, msg: "bookId is not valid book id please check it" })
-    }}
-    let book= await booksModel.findOne({_id:bookId,isDeleted:false})
-    if(!book){
-        return res.status(400).send({status:false,message:"bookId is not matching with any existing bookId or it is deleted"})
-    }
-
-    if (book.userId != req.userId) {
-        return res.status(401).send({status: false, message: "Unauthorized access."})
-    }
-
-    let data= req.body;
-    if (!validate.isValidBody(data)) {
-        return res.status(400).send({ status: false, message: "please provide what you want  to update" })
-    }
-   
-    const { title,excerpt,releasedAt,ISBN} = data;
-    if (title){
-        let titlePresent =await booksModel.find({title:title,isDeleted:false})
-        if(titlePresent.length!==0){
-            return res.status(400).send({status:false,message:"title should be unique , it is already existed with any other book"})
-        }
-     book.title = title;
-    }
-    if (excerpt) book.excerpt = excerpt;
-    if (releasedAt) book.releasedAt = releasedAt;  
-    if(ISBN){
-        let ISBNprensent =await booksModel.find({ISBN:ISBN,isDeleted:false})
-        if(ISBNprensent.length!==0){
-            return res.status(400).send({status:false,message:"ISBN should be unique , it is already existed with any other book"})
-        } 
-        book.ISBN = ISBN;
-    }
-    book.save();
-    res.status(200).send({status:true,message:"updated succesfully",data:book})
-    }
-    catch(err){
-        return res.status(500).send({status:false,message:err.message})
-    }
-}
-
-//--------------------------------------------------------------------//
-
-const deletebookbyId = async function (req, res) {
-
+const updateBooks = async function (req, res) {
     try {
-        let id = req.params.id;
-        let books = await booksModel.findOneAndUpdate({$or: [{ isDeleted: false }, { _id: id }]},
-            { $set: {
-                    isDeleted: true,
-                    deletedAt: Date.now()
-                }
-            },
-            { new: true }
-        )
-        if (!books) {
-            return res.status(404).send({ status: false, msg: "Book is not available" })
+        let bookId = req.params.bookId;
+        if (bookId) {
+            if (!validate.isValidObjectId(bookId)) {
+                return res.status(400).send({ status: false, msg: "bookId is not valid book id please check it" })
+            }
         }
-        res.status(200).send({ status: true, msg: "Document is Deleted" })
-    } catch (err) {
-        console.log("This Is Error", err.message);
-        res.status(500).send({ status: false, msg: err.message })
+        let book = await booksModel.findOne({ _id: bookId, isDeleted: false })
+        if (!book) {
+            return res.status(400).send({ status: false, message: "bookId is not matching with any existing bookId or it is deleted" })
+        }
+
+        if (book.userId != req.userId) {
+            return res.status(401).send({ status: false, message: "Unauthorized access." })
+        }
+
+        let data = req.body;
+        if (!validate.isValidBody(data)) {
+            return res.status(400).send({ status: false, message: "please provide what you want  to update" })
+        }
+
+        const { title, excerpt, releasedAt, ISBN } = data;
+        if (title) {
+            let titlePresent = await booksModel.find({ title: title, isDeleted: false })
+            if (titlePresent.length !== 0) {
+                return res.status(400).send({ status: false, message: "title should be unique , it is already existed with any other book" })
+            }
+            book.title = title;
+        }
+        if (excerpt) book.excerpt = excerpt;
+        if (releasedAt) book.releasedAt = releasedAt;
+        if (ISBN) {
+            let ISBNprensent = await booksModel.find({ ISBN: ISBN, isDeleted: false })
+            if (ISBNprensent.length !== 0) {
+                return res.status(400).send({ status: false, message: "ISBN should be unique , it is already existed with any other book" })
+            }
+            book.ISBN = ISBN;
+        }
+        book.save();
+        res.status(200).send({ status: true, message: "updated succesfully", data: book })
     }
+    catch (err) {
+        return res.status(500).send({ status: false, message: err.message })
+    }
+}
+
+//--------------------------------------------------------------------//
 
 
+const deleteBookById = async function(req,res){
+    try{
+        let bookId = req.params.bookId;
+        if(bookId){
+        if (!validate.isValidObjectId(bookId)) {
+            return res.status(400).send({ status: false, msg: "bookId is not valid book id please check it" })
+        }}
+        let book = await booksModel.findOne({_id:bookId,isDeleted:false})
+        if(!book){
+            return res.status(404).send({status:false,message:"bookId is not matching with any existing bookId or it is deleted"})
+        }
+        if (book.userId != req.userId) {
+            return res.status(401).send({ status: false, message: "Unauthorized access." })
+        }
+        let deleted= await booksModel.findOneAndUpdate({_id:bookId,isDeleted:false},{$set:{isDeleted:true,deletedAt:Date.now()}})
+        if(deleted){
+        return res.status(200).send({status:true,message:"book deleted succesfully"})
+        }
+    }catch(err){
+    res.status(500).send({status:false,message:err.message})
+}
 }
 //--------------------------------------------------------------------//
 
-module.exports = { bookCreation, getBooks, getBookByParams, updateBooks, deletebookbyId }
+module.exports = { bookCreation, getBooks, getBookByParams, updateBooks, deleteBookById }
 
 //--------------------------------------------------------------------//
