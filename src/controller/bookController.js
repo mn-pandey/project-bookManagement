@@ -1,5 +1,6 @@
 const booksModel = require("../models/booksModel")
 const userModel = require("../models/userModel")
+const reviewModel = require("../models/reviewModel")
 const validate = require("../validation/validation")
 const validateDate = require("validate-date");
 
@@ -117,6 +118,108 @@ const getBooks = async function (req, res) {
     }
 }
 
+
 //--------------------------------------------------------------------//
 
-module.exports = { bookCreation, getBooks }
+const getBookByParams = async function (req, res) {
+    try {
+        const bookParams = req.params.bookId
+
+        if (!validate.isValidObjectId(bookParams)) {
+            return res.status(400).send({ status: false, message: "Inavlid bookId." })
+        }
+
+        const findBook = await booksModel.findOne({ _id: bookParams, isDeleted: false })
+        if (!findBook) {
+            return res.status(404).send({ status: false, message: `Book does not exist or is already been deleted for this ${bookParams}.` })
+        }
+
+        const reviewData = await reviewModel.find({ bookId: bookParams })
+        let review = findBook.toObject()
+        if (reviewData) {
+            review["reviewData"] = reviewData
+        }
+        return res.status(200).send({ status: true, message: "Book found Successfully.", data: review })
+    } catch (err) {
+        return res.status(500).send({ status: false, Error: err.message })
+    }
+}
+
+//--------------------------------------------------------------------//
+
+const updateBooks = async function(req,res){
+    try{
+    let bookId = req.params.bookId;
+    if(bookId){
+    if (!validate.isValidObjectId(bookId)) {
+        return res.status(400).send({ status: false, msg: "bookId is not valid book id please check it" })
+    }}
+    let book= await booksModel.findOne({_id:bookId,isDeleted:false})
+    if(!book){
+        return res.status(400).send({status:false,message:"bookId is not matching with any existing bookId or it is deleted"})
+    }
+
+    if (book.userId != req.userId) {
+        return res.status(401).send({status: false, message: "Unauthorized access."})
+    }
+
+    let data= req.body;
+    if (!validate.isValidBody(data)) {
+        return res.status(400).send({ status: false, message: "please provide what you want  to update" })
+    }
+   
+    const { title,excerpt,releasedAt,ISBN} = data;
+    if (title){
+        let titlePresent =await booksModel.find({title:title,isDeleted:false})
+        if(titlePresent.length!==0){
+            return res.status(400).send({status:false,message:"title should be unique , it is already existed with any other book"})
+        }
+     book.title = title;
+    }
+    if (excerpt) book.excerpt = excerpt;
+    if (releasedAt) book.releasedAt = releasedAt;  
+    if(ISBN){
+        let ISBNprensent =await booksModel.find({ISBN:ISBN,isDeleted:false})
+        if(ISBNprensent.length!==0){
+            return res.status(400).send({status:false,message:"ISBN should be unique , it is already existed with any other book"})
+        } 
+        book.ISBN = ISBN;
+    }
+    book.save();
+    res.status(200).send({status:true,message:"updated succesfully",data:book})
+    }
+    catch(err){
+        return res.status(500).send({status:false,message:err.message})
+    }
+}
+
+//--------------------------------------------------------------------//
+
+const deletebookbyId = async function (req, res) {
+
+    try {
+        let id = req.params.id;
+        let books = await booksModel.findOneAndUpdate({$or: [{ isDeleted: false }, { _id: id }]},
+            { $set: {
+                    isDeleted: true,
+                    deletedAt: Date.now()
+                }
+            },
+            { new: true }
+        )
+        if (!books) {
+            return res.status(404).send({ status: false, msg: "Book is not available" })
+        }
+        res.status(200).send({ status: true, msg: "Document is Deleted" })
+    } catch (err) {
+        console.log("This Is Error", err.message);
+        res.status(500).send({ status: false, msg: err.message })
+    }
+
+
+}
+//--------------------------------------------------------------------//
+
+module.exports = { bookCreation, getBooks, getBookByParams, updateBooks, deletebookbyId }
+
+//--------------------------------------------------------------------//

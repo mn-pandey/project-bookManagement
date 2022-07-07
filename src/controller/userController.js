@@ -105,7 +105,7 @@ const loginUser = async function (req, res) {
         const token = jwt.sign({
             userId: user._id,
             iat: Math.floor(Date.now() / 1000),
-            exp: Math.floor(Date.now() / 1000) * 24 * 60 * 60,
+            exp: Math.floor(Date.now() / 1000) * 01 * 01 * 10,
         }, "Project_3_BooksManagement")
 
         res.status(200).send({ status: true, message: "Login Sucsessful ✅", data: token });
@@ -114,6 +114,7 @@ const loginUser = async function (req, res) {
         res.status(500).send({ status: false, msg: err.message })
     }
 }
+
 
 //--------------------------------------------------------------------//
 
