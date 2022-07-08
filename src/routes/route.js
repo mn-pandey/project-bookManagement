@@ -16,6 +16,7 @@ router.get("/books", middleware.tokenChecker, bookController.getBooks)
 router.get("/books/:bookId", middleware.tokenChecker, bookController.getBookByParams)
 router.put("/books/:bookId", middleware.tokenChecker, bookController.updateBooks)
 router.delete("/books/:bookId", middleware.tokenChecker, bookController.deleteBookById)
+router.post("/books/:bookId/review", reviewController.addReview)
 
 //--------------------------------------------------------------------//
 module.exports = router;
