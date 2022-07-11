@@ -1,5 +1,5 @@
 const validator = require("email-validator");
-const { default: mongoose } = require("mongoose");
+const mongoose = require("mongoose");
 
 
 //--------------------------------------------------------------------//

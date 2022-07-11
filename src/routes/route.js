@@ -17,6 +17,8 @@ router.get("/books/:bookId", middleware.tokenChecker, bookController.getBookByPa
 router.put("/books/:bookId", middleware.tokenChecker, bookController.updateBooks)
 router.delete("/books/:bookId", middleware.tokenChecker, bookController.deleteBookById)
 router.post("/books/:bookId/review", reviewController.addReview)
+router.put("/books/:bookId/review/:reviewId", reviewController.updateReview)
+router.delete("/books/:bookId/review/:reviewId", reviewController.deleteReview)
 
 //--------------------------------------------------------------------//
 module.exports = router;

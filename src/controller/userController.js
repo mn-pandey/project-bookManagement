@@ -105,7 +105,7 @@ const loginUser = async function (req, res) {
         const token = jwt.sign({
             userId: user._id,
             iat: Math.floor(Date.now() / 1000),
-            exp: Math.floor(Date.now() / 1000) * 01 * 01 * 10,
+            exp: Math.floor(Date.now() / 1000) + 100,
         }, "Project_3_BooksManagement")
 
         res.status(200).send({ status: true, message: "Login Sucsessful ✅", data: token });

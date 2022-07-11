@@ -39,9 +39,9 @@ const bookCreation = async function (req, res) {
             return res.status(400).send({ status: false, message: "excerpt must be present ⚠️" })
         }
 
-        if (!validate.isValid(ISBN)) {
-            return res.status(400).send({ status: false, message: "ISBN must be present ⚠️" })
-        }
+        if (ISBN.trim().length !== 13 || !Number(ISBN))
+            return res.status(400).send({ status: false, message: "ISBN must contain 13 digits" });
+
         const checkIsbn = await booksModel.findOne({ ISBN: ISBN });
         if (checkIsbn) {
             return res.status(400).send({ status: false, message: "Please provide another isbn, this isbn has been used ⚠️" })
