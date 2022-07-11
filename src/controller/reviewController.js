@@ -1,4 +1,4 @@
-const { default: mongoose } = require("mongoose");
+const mongoose = require("mongoose");
 const booksModel = require("../models/booksModel")
 const reviewModel = require("../models/reviewModel")
 const validate = require("../validation/validation")
@@ -34,7 +34,6 @@ const addReview = async function (req, res) {
 
         if (rating < 1 || rating > 5) {
             return res.status(400).send({ status: false, msg: "Rating should be in between 1 to 5 ❌" })
-
         }
 
         let book = await booksModel.findOne({ _id: req.params.bookId, isDeleted: false })
