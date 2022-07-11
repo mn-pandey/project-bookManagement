@@ -62,7 +62,7 @@ const bookCreation = async function (req, res) {
         if (!validateDate(releasedAt, responseType = 'boolean')) {
             return res.status(400).send({ status: false, message: "Invalid date format, Please provide date as 'YYYY-MM-DD' ⚠️" })
         };
-
+        a
         const user = await userModel.findById(userId)
         if (!user) {
             return res.status(400).send({ status: false, message: "User does not exists ⚠️" })
@@ -113,8 +113,7 @@ const getBooks = async function (req, res) {
 
         }
     } catch (err) {
-        console.log(err)
-        res.status(500).send({ status: false, error: err.message })
+        return res.status(500).send({ status: false, message: err.message });
     }
 }
 
@@ -141,7 +140,7 @@ const getBookByParams = async function (req, res) {
         }
         return res.status(200).send({ status: true, message: "Book found Successfully ✅", data: review })
     } catch (err) {
-        return res.status(500).send({ status: false, Error: err.message })
+        return res.status(500).send({ status: false, message: err.message });
     }
 }
 
@@ -189,9 +188,8 @@ const updateBooks = async function (req, res) {
         }
         book.save();
         return res.status(200).send({ status: true, message: "updated succesfully ✅", data: book })
-    }
-    catch (err) {
-        return res.status(500).send({ status: false, message: err.message })
+    } catch (err) {
+        return res.status(500).send({ status: false, message: err.message });
     }
 }
 
@@ -218,7 +216,7 @@ const deleteBookById = async function (req, res) {
             return res.status(200).send({ status: true, message: "book deleted succesfully ✅" })
         }
     } catch (err) {
-        res.status(500).send({ status: false, message: err.message })
+        return res.status(500).send({ status: false, message: err.message });
     }
 }
 //--------------------------------------------------------------------//

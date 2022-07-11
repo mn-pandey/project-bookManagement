@@ -17,9 +17,9 @@ const registerUser = async function (req, res) {
         if (!validate.isValid(title)) {
             return res.status(400).send({ status: false, message: "Please provide title field 🛑" });
         }
-        if(title){
-            if(!( ["Mr", "Mrs", "Miss"].includes(title))) {
-              return res.status(400).send({ Status: false, message: "Please provide valid title 🛑" })
+        if (title) {
+            if (!(["Mr", "Mrs", "Miss"].includes(title))) {
+                return res.status(400).send({ Status: false, message: "Please provide valid title 🛑" })
             }
         }
 
@@ -98,20 +98,20 @@ const loginUser = async function (req, res) {
         if (!validate.isValid(data.password))
             return res.status(400).send({ status: false, message: "Please provide your Password 🛑" })
 
-        const user = await userModel.findOne ({ email: data.email, password: data.password })
+        const user = await userModel.findOne({ email: data.email, password: data.password })
 
         if (!user) return res.status(400).send({ status: false, message: "Invalid login credentials 🛑" });
 
         const token = jwt.sign({
             userId: user._id,
             iat: Math.floor(Date.now() / 1000),
-            exp: Math.floor(Date.now() / 1000) + 1000,
+            exp: Math.floor(Date.now() / 1000) + 100,
         }, "Project_3_BooksManagement")
 
         res.status(200).send({ status: true, message: "Login Sucsessful ✅", data: token });
 
     } catch (err) {
-        res.status(500).send({ status: false, msg: err.message })
+        return res.status(500).send({ status: false, message: err.message });
     }
 }
 

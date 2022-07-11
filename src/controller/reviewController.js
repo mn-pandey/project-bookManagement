@@ -57,9 +57,7 @@ const addReview = async function (req, res) {
 
         }
     } catch (err) {
-        console.log(err)
-        res.status(500).send({ status: false, error: err.message })
-
+        return res.status(500).send({ status: false, message: err.message });
     }
 }
 
@@ -97,9 +95,8 @@ const updateReview = async function (req, res) {
         if (rating) bookReview.rating = rating
         bookReview.save();
         res.status(200).send({ status: true, message: "updated succesfully ✅", data: bookReview })
-    }
-    catch (err) {
-        res.status(500).send({ status: false, message: err.message })
+    }catch (err) {
+        return res.status(500).send({ status: false, message: err.message });
     }
 }
 
@@ -146,9 +143,8 @@ const deleteReview = async function (req, res) {
         return res.status(200).send({ status: true, message: "Review deleted successfully ✅", data: deleteReviewDetails })
 
     } catch (err) {
-        res.status(500).send({ status: false, Error: err.message })
+        return res.status(500).send({ status: false, message: err.message });
     }
-
 }
 
 //--------------------------------------------------------------------//
