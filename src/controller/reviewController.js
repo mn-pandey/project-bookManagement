@@ -140,7 +140,7 @@ const deleteReview = async function (req, res) {
 
         if (deleteReviewDetails) {
             let response = await booksModel.findOneAndUpdate({ _id: book_id }, { $inc: { reviews: -1 } })
-            return res.status(200).send({ status: true, message: "Review deleted successfully ✅", data: { response, deleteReviewDetails } })
+            return res.status(200).send({ status: true, message: "Review deleted successfully ✅", data: { deleteReviewDetails } })
         }
     } catch (err) {
         return res.status(500).send({ status: false, message: err.message });
