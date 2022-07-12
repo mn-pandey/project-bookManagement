@@ -19,7 +19,7 @@ const addReview = async function (req, res) {
         }
 
         let { reviewedBy, rating, review } = req.body
-        if(reviewedBy){
+        if (reviewedBy) {
             if (!validate.isValid(reviewedBy)) {
                 return res.status(400).send({ status: false, message: "reviewedBy is not valid 🚫" })
             }
@@ -43,19 +43,15 @@ const addReview = async function (req, res) {
             req.body["bookId"] = req.params.bookId
             req.body["reviewedAt"] = new Date()
 
-            let review = await reviewModel.create(req.body)
-
-            let ReviewCount = await reviewModel.find({ bookId: req.params.bookId }).count()
-
-            let countUpdate = await booksModel.findOneAndUpdate({ _id: req.params.bookId }, { reviews: ReviewCount })
-
-            return res.status(201).send({ status: true, msg: "Thank you for Reviewing the book ✅", addedReview: { book, review } })
-
+            let saveReview = await reviewModel.create(req.body)
+            if (saveReview) {
+                await booksModel.findOneAndUpdate({ _id: bookId }, { $inc: { reviews: 1 } })
             }
-            else {
+            let response = await reviewModel.findOne({ _id: saveReview._id }).select({ __v: 0, createdAt: 0, updatedAt: 0, isDeleted: 0 })
+            return res.status(201).send({ status: true, message: "Review added successfully ✅", data: { book, response } })
+        }
+        else {
             return res.status(404).send({ status: true, msg: "no such book exist to be review 🚫" })
-
-
         }
     } catch (err) {
         return res.status(500).send({ status: false, message: err.message });
@@ -95,8 +91,8 @@ const updateReview = async function (req, res) {
         if (reviewedBy) bookReview.reviewedBy = reviewedBy;
         if (rating) bookReview.rating = rating
         bookReview.save();
-        res.status(200).send({ status: true, message: "updated succesfully ✅", data: {book, bookReview} })
-    }catch (err) {
+        res.status(200).send({ status: true, message: "updated succesfully ✅", data: { book, bookReview } })
+    } catch (err) {
         return res.status(500).send({ status: false, message: err.message });
     }
 }
@@ -133,14 +129,18 @@ const deleteReview = async function (req, res) {
             return res.status(400).send({ status: false, message: "can not delete review of deleted Book 🚫" })
         }
 
-        const deleteReviewDetails = await reviewModel.findOneAndUpdate({_id: review_Id},{ $set: {isDeleted: true,
-            deletedAt: new Date()}},
-            {new: true}
+        const deleteReviewDetails = await reviewModel.findOneAndUpdate({ _id: review_Id }, {
+            $set: {
+                isDeleted: true,
+                deletedAt: new Date()
+            }
+        },
+            { new: true }
         )
 
         if (deleteReviewDetails) {
-        let response = await booksModel.findOneAndUpdate({ _id: book_id }, { $inc: { reviews: -1 } })
-        return res.status(200).send({ status: true, message: "Review deleted successfully ✅", data: { response, deleteReviewDetails} })
+            let response = await booksModel.findOneAndUpdate({ _id: book_id }, { $inc: { reviews: -1 } })
+            return res.status(200).send({ status: true, message: "Review deleted successfully ✅", data: { response, deleteReviewDetails } })
         }
     } catch (err) {
         return res.status(500).send({ status: false, message: err.message });
