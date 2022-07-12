@@ -46,13 +46,13 @@ const addReview = async function (req, res) {
             let review = await reviewModel.create(req.body)
 
             let ReviewCount = await reviewModel.find({ bookId: req.params.bookId }).count()
-            console.log(ReviewCount)
 
             let countUpdate = await booksModel.findOneAndUpdate({ _id: req.params.bookId }, { reviews: ReviewCount })
 
-            return res.status(201).send({ status: true, msg: "Thank you for Reviewing the book ✅", addedReview: review })
+            return res.status(201).send({ status: true, msg: "Thank you for Reviewing the book ✅", addedReview: { book, review } })
 
-        } else {
+            }
+            else {
             return res.status(404).send({ status: true, msg: "no such book exist to be review 🚫" })
 
 
@@ -95,7 +95,7 @@ const updateReview = async function (req, res) {
         if (reviewedBy) bookReview.reviewedBy = reviewedBy;
         if (rating) bookReview.rating = rating
         bookReview.save();
-        res.status(200).send({ status: true, message: "updated succesfully ✅", data: bookReview })
+        res.status(200).send({ status: true, message: "updated succesfully ✅", data: {book, bookReview} })
     }catch (err) {
         return res.status(500).send({ status: false, message: err.message });
     }
@@ -139,10 +139,9 @@ const deleteReview = async function (req, res) {
         )
 
         if (deleteReviewDetails) {
-            await booksModel.findOneAndUpdate({ _id: book_id }, { $inc: { reviews: -1 } })
+        let response = await booksModel.findOneAndUpdate({ _id: book_id }, { $inc: { reviews: -1 } })
+        return res.status(200).send({ status: true, message: "Review deleted successfully ✅", data: { response, deleteReviewDetails} })
         }
-        return res.status(200).send({ status: true, message: "Review deleted successfully ✅", data: deleteReviewDetails })
-
     } catch (err) {
         return res.status(500).send({ status: false, message: err.message });
     }

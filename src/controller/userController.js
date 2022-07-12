@@ -69,9 +69,28 @@ const registerUser = async function (req, res) {
             return res.status(400).send({ status: false, message: "Please provide password with minimum or equal to 8 and maximum or equal to 15 characters 🛑" });;
         }
 
-        if (!validate.isValid(address)) {
-            return res.status(400).send({ status: false, message: "Please provide address 🛑" });
+        // if (!validate.isValid(address)) {
+        //     return res.status(400).send({ status: false, message: "Please provide address 🛑" });
+        // }
+
+        if (Object.keys(data).includes('address')) {
+            if (typeof address !== "object") return res.status(400).send({ status: false, message: "address should be an object" })
+
+            if (Object.keys(address).length == 0) {
+                return res.status(400).send({
+                    status: false, message: "address should not be empty",
+                });
+            }
+
+            if (!validate.isValid(address)) {
+                return res.status(400).send({ status: false, message: "address should not be empty" });
+            }
+
+            if (!/^[1-9][0-9]{5}$/.test(address.pincode)) {
+                return res.status(400).send({ status: false, message: "Invalid pincode" });
+            }
         }
+
 
         let registration = { title, name, phone, email, password, address }
 
