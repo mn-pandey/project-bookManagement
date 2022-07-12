@@ -62,7 +62,7 @@ const bookCreation = async function (req, res) {
         if (!validateDate(releasedAt, responseType = 'boolean')) {
             return res.status(400).send({ status: false, message: "Invalid date format, Please provide date as 'YYYY-MM-DD' ⚠️" })
         };
-        a
+
         const user = await userModel.findById(userId)
         if (!user) {
             return res.status(400).send({ status: false, message: "User does not exists ⚠️" })
