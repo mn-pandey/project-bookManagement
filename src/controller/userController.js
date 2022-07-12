@@ -81,10 +81,6 @@ const registerUser = async function (req, res) {
             if (!validate.isValid(address)) {
                 return res.status(400).send({ status: false, message: "address should not be empty" });
             }
-
-            if (!/^[1-9][0-9]{5}$/.test(address.pincode)) {
-                return res.status(400).send({ status: false, message: "Invalid pincode" });
-            }
         }
 
 
