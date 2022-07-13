@@ -22,8 +22,8 @@ router.delete("/books/:bookId", middleware.tokenChecker, bookController.deleteBo
 
 //-----------------------REVIEW-----------------------------------------//
 
-router.post("/books/:bookId/review", reviewController.addReview)
-router.put("/books/:bookId/review/:reviewId", reviewController.updateReview)
+router.post("/books/:bookId/review", reviewController.createReview)
+router.put("/books/:bookId/review/:reviewId", reviewController.updatedReview)
 router.delete("/books/:bookId/review/:reviewId", reviewController.deleteReview)
 
 //--------------------------------------------------------------------//
