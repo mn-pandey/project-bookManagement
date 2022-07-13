@@ -1,6 +1,6 @@
 const booksModel = require("../models/booksModel")
 const userModel = require("../models/userModel")
-const reviewModel = require("../routes/reviewModel")
+const reviewModel = require("../models/reviewModel")
 const validate = require("../validation/validation")
 
 //--------------------------------------------------------------------//

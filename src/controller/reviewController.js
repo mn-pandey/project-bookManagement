@@ -60,7 +60,10 @@ const addReview = async function (req, res) {
 //--------------------------------------------------------------------//
 
 const updateReview = async function (req, res) {
+
     try {
+        let update = {}
+
         let bookId = req.params.bookId;
         let reviewId = req.params.reviewId;
         if (bookId) {
@@ -81,21 +84,38 @@ const updateReview = async function (req, res) {
         if (!bookReview) {
             return res.status(404).send({ status: false, message: "review not found with this book id or it may be deleted 🚫" })
         }
-        let data = req.body;
-        if (!validate.isValidBody(data)) {
-            return res.status(400).send({ status: false, message: "please provide what you want  to update 🚫" })
+
+        let { reviewedBy, rating, review } = req.body
+        if (reviewedBy) {
+            if (!validate.isValid(reviewedBy)) {
+                return res.status(400).send({ status: false, message: 'reviewedAt is not valid value ' })
+            }
+            update["reviewedBy"] = reviewedBy
         }
-        const { review, reviewedBy, rating } = data;
-        if (review) bookReview.review = review;
-        if (reviewedBy) bookReview.reviewedBy = reviewedBy;
-        if (rating) bookReview.rating = rating
-        bookReview.save();
-        res.status(200).send({ status: true, message: "updated succesfully ✅", data: { book, bookReview } })
+        if (review) {
+            if (!validate.isValid(review)) {
+                return res.status(400).send({ status: false, message: 'reviewedAt is not valid value ' })
+            }
+            update["review"] = review
+        }
+        if (rating) {
+            if (rating < 1 || rating > 5) {
+                return res.status(400).send({ status: false, msg: "Rating should be in between 1 to 5 " })
+
+            }
+            update["rating"] = rating
+        }
+        let updatedReview = await reviewModel.findOneAndUpdate({ _id: req.params.reviewId, isDeleted: false }, update, { new: true })
+
+        return res.status(200).send({ status: false, msg: "review update is successfull...", updatedReview })
+
+
     } catch (err) {
-        return res.status(500).send({ status: false, message: err.message });
+
+        console.log(err)
+        res.status(500).send({ status: false, error: err.message })
     }
 }
-
 
 //---------------------------------------------------------------------//
 
