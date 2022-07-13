@@ -36,6 +36,14 @@ let alphabetTestOfString = function (value) {
   return true;
 };
 
+const validateDate = function (value){
+  let regex =  /^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/;
+  if(!regex.test(value)){
+    return false;
+  }
+  return true;
+}
+
 const isValidObjectId = function (objectId) {
   return mongoose.Types.ObjectId.isValid(objectId)
 }
@@ -51,6 +59,7 @@ module.exports = {
   isValidSyntaxOfEmail,
   isValidMobileNum,
   alphabetTestOfString,
+  validateDate,
   isValidObjectId
 };
 

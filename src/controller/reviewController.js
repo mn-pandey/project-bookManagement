@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const booksModel = require("../models/booksModel")
 const reviewModel = require("../models/reviewModel")
 const validate = require("../validation/validation")
@@ -139,7 +138,7 @@ const deleteReview = async function (req, res) {
         )
 
         if (deleteReviewDetails) {
-            let response = await booksModel.findOneAndUpdate({ _id: book_id }, { $inc: { reviews: -1 } })
+            let response = await booksModel.findOneAndUpdate({ _id: book_id }, { $inc: { reviews: -1 } }, { new : true })
             return res.status(200).send({ status: true, message: "Review deleted successfully ✅", data: { response, deleteReviewDetails } })
         }
     } catch (err) {

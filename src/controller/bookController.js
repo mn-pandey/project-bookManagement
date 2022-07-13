@@ -2,7 +2,6 @@ const booksModel = require("../models/booksModel")
 const userModel = require("../models/userModel")
 const reviewModel = require("../models/reviewModel")
 const validate = require("../validation/validation")
-const validateDate = require("validate-date");
 
 //--------------------------------------------------------------------//
 
@@ -39,12 +38,16 @@ const bookCreation = async function (req, res) {
             return res.status(400).send({ status: false, message: "excerpt must be present ⚠️" })
         }
 
+        if (!validate.isValid(ISBN)) {
+            return res.status(400).send({ status: false, message: "ISBN must be present ⚠️" })
+        }
+        
         if (ISBN.trim().length !== 13 || !Number(ISBN))
             return res.status(400).send({ status: false, message: "ISBN must contain 13 digits" });
 
         const checkIsbn = await booksModel.findOne({ ISBN: ISBN });
         if (checkIsbn) {
-            return res.status(400).send({ status: false, message: "Please provide another isbn, this isbn has been used ⚠️" })
+            return res.status(404).send({ status: false, message: "Please provide another isbn, this isbn has been used ⚠️" })
         }
 
         if (!validate.isValid(category)) {
@@ -59,13 +62,13 @@ const bookCreation = async function (req, res) {
             return res.status(400).send({ status: false, message: "releasedAt must be present ⚠️" })
         }
 
-        if (!validateDate(releasedAt, responseType = 'boolean')) {
+        if (!validate.validateDate(releasedAt)) {
             return res.status(400).send({ status: false, message: "Invalid date format, Please provide date as 'YYYY-MM-DD' ⚠️" })
         };
 
         const user = await userModel.findById(userId)
         if (!user) {
-            return res.status(400).send({ status: false, message: "User does not exists ⚠️" })
+            return res.status(404).send({ status: false, message: "User does not exists ⚠️" })
         }
 
         const newBook = await booksModel.create(data);
@@ -133,7 +136,7 @@ const getBookByParams = async function (req, res) {
             return res.status(404).send({ status: false, message: `Book does not exist or is already been deleted for this ${bookParams} ⚠️` })
         }
 
-        const reviewData = await reviewModel.find({ bookId: bookParams })
+        const reviewData = await reviewModel.find({ bookId: bookParams }).select({ __v: 0, createdAt: 0, updatedAt: 0, isDeleted: 0 })
         let review = findBook.toObject()
         if (reviewData) {
             review["reviewData"] = reviewData
@@ -157,7 +160,7 @@ const updateBooks = async function (req, res) {
 
         let book = await booksModel.findOne({ _id: bookId, isDeleted: false })
         if (!book) {
-            return res.status(400).send({ status: false, message: "bookId is not matching with any existing bookId or it is deleted ⚠️" })
+            return res.status(404).send({ status: false, message: "bookId is not matching with any existing bookId or it is deleted ⚠️" })
         }
 
         if (book.userId != req.userId) {
